@@ -2,27 +2,26 @@ clear all;
 close all;
 
 ro = 2;
+u0 = 20;
 
 x0 = [0, 0.5, 0, 0.5, 0.25*pi,-0.5,0.25*pi,-0.5,1,0]';
 t = 0:0.001:0.25;
-u_temp_2 = [sin(t);sin(t);sin(t)];
-%u_temp_2 = u(t, [0 0.3 0.6 0.9], [0.5 0.8], [0.25 0.5 0.75 1]);
-[t, y] = rk4(@crane_rhs, u_temp_2, t, x0);
-%[t2, y2] = rk4(@crane_rhs, fliplr(u_temp_2), fliplr(t), y(:,length(y)));
-[t2, y2] = rk4_b(@rhs_psi, u_temp_2, t, -ro*y(:,length(y)));
-% for i=1:3
-%     subplot(3, 1, i)
-%     plot(t, u_temp_2(i,:));
-% end
+u = u_bang_bang(t, [], [], u0);
+[t, x] = rk4(@crane_rhs, u, t, x0);
+[~, psi] = rk4_b(@rhs_psi, u, t, -ro*x(:,length(x)));
+g = rhs_psi_u(t, x, psi);
 
-%figure(2);
-% w2 = 1:30;
-% w  = (length(t)-length(w2)):length(t);
-% t = t(w);
-% t2 = t2(w2);
+
+subplot(3,1,1);
+plot(t, x([1 3 5 7],:));
+title('Stan systemu crane rhs');
+subplot(3,1,2);
+plot(t, g(1,:));
 hold on;
-plot(t, y([1 3 5 7],:));
-figure(2);
-plot(t2, y2([1 3 5 7],:));
-%figure(2);
-%plot(t2, y2([1 3 5 7 9],w2));
+plot(t, u(1,:), 'r');
+title('Funkcja g_1(t) oraz u_1(t)');
+subplot(3,1,3);
+plot(t, g(2,:));
+hold on;
+plot(t, u(2,:), 'r');
+title('Funkcja g_2(t) oraz u_2(t)');
