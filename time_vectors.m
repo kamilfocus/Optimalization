@@ -22,7 +22,7 @@ function [ time ] = time_vectors( t, u1, u2 ,MSHDNS)
     if n>0
         tmp_t0=bangs(n);
     else
-        tmp_t0=bangs(n);
+        tmp_t0=t(1);
     end
     time(n+1,:)=linspace(tmp_t0,T,MSHDNS);
 end
