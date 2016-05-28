@@ -3,6 +3,10 @@ addpath('../.');
 
 init_globals;
 
+fun_rhs = @rhs_simple;
+fun_rhs_psi = @rhs_psi_simple;
+fun_rhs_psi_u = @rhs_psi_u_simple;
+
 x0 = [10, -0.5]';
 x_f = [0, 0]';
 ro = 2;
@@ -24,14 +28,13 @@ max_iter = 3;
 for i= 1: max_iter
     
     %generacja sterowania
-    u_in = u_bang_bang(t, ntau, [], u0);
-    u_in = u_in(1,:);
+    u_in = u_bang_bang(t, ntau, u0);
     
-    [t, x] = rk4(@rhs_simple, u_in, t, x0);
+    [t, x] = rk4(fun_rhs, u_in, t, x0);
     psi_T = -ro*(x(:,length(x)) - x_f);
-    [t, psi] = rk4_b(@rhs_psi_simple, u_in, t, [x(:,length(x)); psi_T]);
+    [t, psi] = rk4_b(fun_rhs_psi, u_in, t, [x(:,length(x)); psi_T]);
     psi = psi(3:4, :);
-    g = rhs_psi_u_simple(t, x, psi);
+    g = fun_rhs_psi_u(t, x, psi);
     
     plot_data(t,x, g, u_in);
     
@@ -43,8 +46,7 @@ for i= 1: max_iter
     
     % sclanie tau~gamma
     gamma = t(gamma);
-    [ntau, nu0] = new_tau(ntau, gamma, u0);
-    u0 = nu0;
+    [ntau, u0] = new_tau(ntau, gamma, u0);
     
     % optymalizacja
     %ograniczenia, ci¹g tau niemalejacy
@@ -56,17 +58,17 @@ for i= 1: max_iter
     lb = zeros(1, length(ntau));
     ub = T*ones(1, length(ntau));
 
-    ntau = fmincon(@(ntau)S_q(ntau),ntau,A,b,Aeq,beq,lb,ub,nonlcon,options);
+    ntau = fmincon(@(ntau)S_q_simple(ntau),ntau,A,b,Aeq,beq,lb,ub,nonlcon,options);
 
 end
 
 % final results
-u_in = u_bang_bang(t, ntau, [], u0);
+u_in = u_bang_bang(t, ntau, u0);
 u_in = u_in(1,:);
 
 [t, x] = rk4(@rhs_simple, u_in, t, x0);
 psi_T = -ro*(x(:,length(x)) - x_f);
-[t, psi] = rk4_b(@rhs_psi_simple, u_in, t, [x(:,length(x)); psi_T]);
+[t, psi] = rk4_b(fun_rhs_psi, u_in, t, [x(:,length(x)); psi_T]);
 psi = psi(3:4, :);
-g = rhs_psi_u_simple(t, x, psi);
+g = fun_rhs_psi_u(t, x, psi);
 plot_data(t, x, g, u_in);

@@ -1,4 +1,4 @@
-function dpsi=rhs_psi(t, x, u)
+function dpsi=crane_rhs_psi(t, x, u)
 
 %global g mi1 mi2
 g = 9.81;
@@ -60,27 +60,27 @@ N2=u(2)-k2*x(4);
 N3 = 0;
 
 
-% dx = zeros(10, 1);
-% 
-% dx(1)=x(2);
-% 
-% dx(2)=N1+mi1*c5*N3;
-% 
-% dx(3)=x(4);
-% 
-% dx(4)=N2+mi2*s5*s7*N3;
-% 
-% dx(5)=x(6);
-% 
-% dx(6)=(s5*N1-c5*s7*N2+(mi1-mi2*s7^2)*c5*s5*N3+V5)/x(9);
-% 
-% dx(7)=x(8);
-% 
-% dx(8)=-(c7*N2+mi2*s5*c7*s7*N3+V6)/(s5*x(9));
-% 
-% dx(9)= 0;
-% 
-% dx(10)= 0;
+dx = zeros(10, 1);
+
+dx(1)=x(2);
+
+dx(2)=N1+mi1*c5*N3;
+
+dx(3)=x(4);
+
+dx(4)=N2+mi2*s5*s7*N3;
+
+dx(5)=x(6);
+
+dx(6)=(s5*N1-c5*s7*N2+(mi1-mi2*s7^2)*c5*s5*N3+V5)/x(9);
+
+dx(7)=x(8);
+
+dx(8)=-(c7*N2+mi2*s5*c7*s7*N3+V6)/(s5*x(9));
+
+dx(9)= 0;
+
+dx(10)= 0;
 
 
 
@@ -149,7 +149,5 @@ A(10,8)=-(mi2*k3*c7*s7+2*x(8))/x(9);
 A(10,10)=-k3*(1+mi1*c5^2+mi2*(s5*s7)^2);
 
 
-
-dpsi=-A'*x;
-
-%dy=[dx; dpsi];
+dpsi=-A'*x(11:20);
+dpsi=[dx; dpsi];

@@ -1,6 +1,8 @@
 function gamma = find_gamma(tau, t, x, psi, u)
 
-g = rhs_psi_u_simple(t,x,psi);
+global fun_rhs_psi_u;
+
+g = fun_rhs_psi_u(t,x,psi);
 
 tau = [tau length(t)];
 
