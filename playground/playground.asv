@@ -20,7 +20,7 @@ Aeq = [];
 beq = [];
 nonlcon = [];
 
-max_iter = 1;
+max_iter = 2;
 for i= 1: max_iter
     
     %generacja sterowania
@@ -36,14 +36,14 @@ for i= 1: max_iter
     plot_data(t,x, g, u_in);
     
     % generacja szpil 
-    gamma = find_gamma(convert_tau(ntau), t, x, psi, u_in);
+    gamma = find_gamma([], t, x, psi, u_in);
     if(isempty(gamma))
         break;
     end
     
     % sclanie tau~gamma
     gamma = t(gamma)
-    [ntau, nu0] = new_tau(ntau, gamma, u0)
+    [ntau, nu0] = new_tau(ntau, gamma, u0);
     u0 = nu0;
     
     % optymalizacja
@@ -56,7 +56,7 @@ for i= 1: max_iter
     lb = zeros(1, length(ntau));
     ub = T*ones(1, length(ntau));
 
-    ntau = fmincon(@(ntau)S_q(ntau),ntau,A,b,Aeq,beq,lb,ub,nonlcon,options);
+    opt_tau = fmincon(@(ntau)S_q(ntau),ntau,A,b,Aeq,beq,lb,ub,nonlcon,options);
 
 end
 
