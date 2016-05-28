@@ -20,7 +20,7 @@ Aeq = [];
 beq = [];
 nonlcon = [];
 
-max_iter = 1;
+max_iter = 3;
 for i= 1: max_iter
     
     %generacja sterowania
@@ -42,8 +42,8 @@ for i= 1: max_iter
     end
     
     % sclanie tau~gamma
-    gamma = t(gamma)
-    [ntau, nu0] = new_tau(ntau, gamma, u0)
+    gamma = t(gamma);
+    [ntau, nu0] = new_tau(ntau, gamma, u0);
     u0 = nu0;
     
     % optymalizacja

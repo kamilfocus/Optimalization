@@ -14,7 +14,6 @@ for i=1:length(ntau)
     end
 end
 
-cnt
 if( mod(cnt, 2) == 1)
     nu0 = -u0;
 

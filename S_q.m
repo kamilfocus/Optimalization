@@ -1,7 +1,6 @@
 function [J, grad] = S_q(tau)
 
 init_globals;
-
 tau = convert_tau(tau);
 
 u_in = u_bang_bang(t, t(tau), [], u0);
@@ -16,9 +15,10 @@ dJ = ro*(x(:,end)-x_f);
 psi = psi(3:4, :);
 g = rhs_psi_u_simple(t,x, psi);
 
-grad = [];
+grad = zeros(1, length(tau));
 for i = 1:length(tau)  
-    grad = [grad grad_S_q_tau(tau(i), g ,u_in)];
+    %grad = [grad grad_S_q_tau(tau(i), g ,u_in)];
+    grad(i) = grad_S_q_tau(tau(i), g ,u_in);
 end
-    
+[J, grad];
 end
