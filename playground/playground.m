@@ -15,7 +15,7 @@ u0 = 3;
 ntau = [];
 
 options = optimoptions('fmincon', 'MaxIter', 10);
-options = optimoptions(options, 'GradObj', 'on');
+options = optimoptions(options, 'GradObj', 'on', 'Algorithm', 'interior-point');
 Aeq = [];
 beq = [];
 nonlcon = [];
