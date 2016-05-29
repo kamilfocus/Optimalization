@@ -18,7 +18,7 @@ J = 0.5*(x(:,end)-x_f)'*ro*(x(:,end)-x_f) + q*T;
 dJ = ro*(x(:,end)-x_f);
 
 [t, psi] = rk4_b(fun_rhs_psi, u_in, t, [x(:,length(x)); -dJ]);
-psi = psi(11:20, :);
+psi = psi(9:16, :);
 g = fun_rhs_psi_u(t,x, psi);
 
 grad = zeros(1, length(tau));

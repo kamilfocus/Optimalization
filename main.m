@@ -9,18 +9,22 @@ fun_rhs = @crane_rhs;
 fun_rhs_psi = @crane_rhs_psi;
 fun_rhs_psi_u = @rhs_psi_u;
 
-x0 = [0, 0.5, 0, 0.5, 0.25*pi,-0.5,0.25*pi,-0.5,1,0]';
-x_f = [1, 0, 1, 0, 0.5*pi, 0, 0, 0, 1, 0]';
+%x0 = [0, 0.5, 0, 0.5, 0.25*pi,-0.5,0.25*pi,-0.5,1,0]';
+%x_f = [1, 0, 1, 0, 0.5*pi, 0, 0, 0, 1, 0]';
 %x_f = zeros(10, 1);
 %x_f(9) = 1;
+
+x0 = [0, 0.5, 0, 0.5, 0.25*pi,-0.5,0.25*pi,-0.5]';
+%4.2337
+x_f = [1, 0, 1, 0, 0.5*pi, 0, 0, 0]';
 
 ro = 2;
 q = 1;
 
-T = 0.25;
+T = 1;
 h = 0.001;
 t = 0:h:T;
-u0 = [1, 2];
+u0 = [20, 20];
 
 ntau1 = [];
 ntau2 = [];
@@ -31,7 +35,7 @@ Aeq = [];
 beq = [];
 nonlcon = [];
 
-max_iter = 3;
+max_iter = 2;
 for i= 1: max_iter
     
     %generacja sterowania
@@ -41,10 +45,11 @@ for i= 1: max_iter
     [t, x] = rk4(fun_rhs, u_in, t, x0);
     psi_T = -ro*(x(:,length(x)) - x_f);
     [t, psi] = rk4_b(fun_rhs_psi, u_in, t, [x(:,length(x)); psi_T]);
-    psi = psi(11:20, :);
+    %psi = psi(11:20, :);
+    psi = psi(9:16, :);
     g = fun_rhs_psi_u(t, x, psi);
    
-    plot_data(t,x, g, u_in);
+    plot_data(t,x([5 6],:), g, u_in);
     
     % generacja szpil 
     gamma1 = find_gamma(convert_tau(ntau1), length(t), g(1,:), u_in(1,:));
@@ -97,6 +102,6 @@ u_in = [u_in; u_bang_bang(t, ntau2, u0(2))];
 [t, x] = rk4(fun_rhs, u_in, t, x0);
 psi_T = -ro*(x(:,length(x)) - x_f);
 [t, psi] = rk4_b(fun_rhs_psi, u_in, t, [x(:,length(x)); psi_T]);
-psi = psi(11:20, :);
+psi = psi(9:16, :);
 g = fun_rhs_psi_u(t, x, psi);
-plot_data(t, x, g, u_in);
+plot_data(t, x([5 6],:), g, u_in);
