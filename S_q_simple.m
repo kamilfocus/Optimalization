@@ -2,6 +2,10 @@ function [J, grad] = S_q_simple(tau)
 
 init_globals;
 %tau
+
+horizon = tau(end);
+tau = tau(1:end-1);
+
 tau = sort(tau);
 tau = convert_tau(tau);
 
@@ -17,10 +21,11 @@ dJ = ro*(x(:,end)-x_f);
 psi = psi(3:4, :);
 g = fun_rhs_psi_u(t,x, psi);
 
-grad = zeros(1, length(tau));
+grad = zeros(1, length(tau)+1);
 for i = 1:length(tau)  
     %grad = [grad grad_S_q_tau(tau(i), g ,u_in)];
     grad(i) = grad_S_q_tau(i, tau, g ,u_in, length(t));
 end
+    grad(end) = grad_S_q_T(x(:,end),-dJ, u_in(end), horizon, q);
 %[J, grad]
 end

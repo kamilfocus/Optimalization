@@ -24,6 +24,7 @@ q = 1;
 T = 1;
 h = 0.001;
 t = 0:h:T;
+
 u0 = [20, 20];
 
 ntau1 = [];
@@ -37,7 +38,7 @@ nonlcon = [];
 
 max_iter = 2;
 for i= 1: max_iter
-    
+        
     %generacja sterowania
     u_in = u_bang_bang(t, ntau1, u0(1));
     u_in = [u_in; u_bang_bang(t, ntau2, u0(2))];

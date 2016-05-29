@@ -10,10 +10,10 @@ fun_rhs_psi_u = @rhs_psi_u_simple;
 x0 = [10, -0.5]';
 x_f = [0, 0]';
 ro = 2;
-q = 1;
+q = 0.5;
 T = 4;
 h = 0.001;
-t = 0:h:T;
+%t = 0:h:T;
 u0 = 3;
 
 ntau = [];
@@ -26,6 +26,8 @@ nonlcon = [];
 
 max_iter = 10;
 for i= 1: max_iter
+    
+    t = 0:h:T;
     
     %generacja sterowania
     u_in = u_bang_bang(t, ntau, u0);
@@ -50,6 +52,7 @@ for i= 1: max_iter
     
     % optymalizacja
     %ograniczenia, ci¹g tau niemalejacy
+    ntau = [ntau, T];
     tau_len = length(ntau);
     A = -eye(tau_len) + tril(ones(tau_len),-1) - tril(ones(tau_len),-2); % poddiagonalna
     b = zeros(1, tau_len);
@@ -59,6 +62,9 @@ for i= 1: max_iter
     ub = T*ones(1, length(ntau));
     
     ntau = fmincon(@(ntau)S_q_simple(ntau),ntau,A,b,Aeq,beq,lb,ub,nonlcon,options);
+    T = ntau(end);
+    ntau = ntau(1:end-1);
+    
     ntau = sort(ntau);
     ntau = reductor(ntau);
     
