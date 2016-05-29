@@ -1,17 +1,17 @@
-function gamma = find_gamma(tau, t, x, psi, u)
+function gamma = find_gamma(tau, T_size, g, u)
 
-global fun_rhs_psi_u;
+%global fun_rhs_psi_u;
 
-g = fun_rhs_psi_u(t,x,psi);
+%g = fun_rhs_psi_u(t,x,psi);
 
-tau = [tau length(t)];
+tau = [tau T_size];
 
 flag = 0;
 minimum = [];
 current_tau = 0;
 gamma = [];
 
-for i = 1:length(t)
+for i = 1:T_size
    g_u = g(i)*u(i);
    
    if( sign(g_u) < 0 && flag == 0 )
@@ -30,7 +30,7 @@ for i = 1:length(t)
        current_tau = current_tau+1;
        if(flag == 1)
             flag = 0;
-            if(minimum == 1 || minimum == length(t))
+            if(minimum == 1 || minimum == T_size)
                 gamma = [gamma, minimum];
             else
                 gamma = [gamma, minimum, minimum];
@@ -41,6 +41,6 @@ for i = 1:length(t)
   
 end
 
-gamma = sort(gamma);
+%gamma = sort(gamma);
   
 end

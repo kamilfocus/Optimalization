@@ -24,7 +24,7 @@ Aeq = [];
 beq = [];
 nonlcon = [];
 
-max_iter = 3;
+max_iter = 10;
 for i= 1: max_iter
     
     %generacja sterowania
@@ -39,7 +39,7 @@ for i= 1: max_iter
     plot_data(t,x, g, u_in);
     
     % generacja szpil 
-    gamma = find_gamma(convert_tau(ntau), t, x, psi, u_in);
+    gamma = find_gamma(convert_tau(ntau), length(t), g, u_in);
     if(isempty(gamma))
         break;
     end
@@ -57,9 +57,10 @@ for i= 1: max_iter
     % ogarniczenie 0<=tau(i)<=T
     lb = zeros(1, length(ntau));
     ub = T*ones(1, length(ntau));
-
+    
     ntau = fmincon(@(ntau)S_q_simple(ntau),ntau,A,b,Aeq,beq,lb,ub,nonlcon,options);
-
+    ntau = sort(ntau);
+    
 end
 
 % final results

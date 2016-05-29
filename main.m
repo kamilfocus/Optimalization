@@ -27,13 +27,11 @@ ntau2 = [];
 
 options = optimoptions('fmincon', 'MaxIter', 10);
 options = optimoptions(options, 'GradObj', 'on', 'Algorithm', 'interior-point');
-A = [];
-b = [];
 Aeq = [];
 beq = [];
 nonlcon = [];
 
-max_iter = 1;
+max_iter = 3;
 for i= 1: max_iter
     
     %generacja sterowania
@@ -49,8 +47,8 @@ for i= 1: max_iter
     plot_data(t,x, g, u_in);
     
     % generacja szpil 
-    gamma1 = find_gamma(convert_tau(ntau1), t, x, psi, u_in(1,:));
-    gamma2 = find_gamma(convert_tau(ntau2), t, x, psi, u_in(2,:));
+    gamma1 = find_gamma(convert_tau(ntau1), length(t), g(1,:), u_in(1,:));
+    gamma2 = find_gamma(convert_tau(ntau2), length(t), g(2,:), u_in(2,:));
     
     if(isempty(gamma1) && isempty(gamma2))
         break;
@@ -85,7 +83,10 @@ for i= 1: max_iter
     ntau = fmincon(@(ntau)S_q(ntau, tau_len1, tau_len2),ntau,A,b,Aeq,beq,lb,ub,nonlcon,options);
     
     ntau1 = ntau(1:tau_len1);
+    ntau1 = sort(ntau1);
+    
     ntau2 = ntau(tau_len1+1 : end);
+    ntau2 = sort(ntau2);
 
 end
 

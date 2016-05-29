@@ -26,6 +26,7 @@ while (i <= length(t))
     
     if(i == length(t))
         disp('there is no index for given time');
+        tau
     end
     i = i + 1;
 end
