@@ -60,6 +60,7 @@ for i= 1: max_iter
     
     ntau = fmincon(@(ntau)S_q_simple(ntau),ntau,A,b,Aeq,beq,lb,ub,nonlcon,options);
     ntau = sort(ntau);
+    ntau = reductor(ntau);
     
 end
 

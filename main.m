@@ -89,9 +89,11 @@ for i= 1: max_iter
     
     ntau1 = ntau(1:tau_len1);
     ntau1 = sort(ntau1);
+    ntau1 = reductor(ntau1);
     
     ntau2 = ntau(tau_len1+1 : end);
     ntau2 = sort(ntau2);
+    ntau2 = reductor(ntau2);
 
 end
 
