@@ -93,6 +93,17 @@ maxbibnames=5,
 
 %----------------------------------------------------------------------------------------
 
+% dodatkowe typy kolumn tabel
+
+% flush left fixed width:
+\newcolumntype{L}[1]{>{\raggedright\arraybackslash}p{#1}}
+
+% center fixed width:
+\newcolumntype{C}[1]{>{\centering\arraybackslash}p{#1}}
+
+% flush right fixed width:
+\newcolumntype{R}[1]{>{\raggedleft\arraybackslash}p{#1}}
+
 \begin{document}
  
 \input{spr_titlepage.tex} 
@@ -100,7 +111,19 @@ maxbibnames=5,
 \section{Wstęp}
 
 Celem projektu była implementacja sterowania czasooptymalnego dla modelu
-suwnicy, której schemat znajduje się na rysunku \ref{sch:model}.
+suwnicy. Suwnica w przyjętej konfiguracji, potrafi poruszać się w dwóch
+kierunkach w płaszczyźnie poziomej. Ponadto długość liny nośnej jest niezależnie sterowana.
+Daje to system o trzech wejściach sterujących. Taki model suwnicy można opisać
+układem nieliniowych równań różniczkowych rzędu 10. Sterowanie optymalne
+wyznaczone zostanie przy pomocy metody \textit{variable control
+parametrization} uogólnionej na wielowejściowy system \cite{agh:vcpftop}.
+Poniższa praca została w dużej części wzorowana artykułem \cite{agh:crane}.
+
+\newpage
+
+\section{Model matematyczny suwnicy}
+
+Schemat modelowanego systemu znajduje się na rysunku \ref{sch:model}.
 
 \begin{figure}[!htb]
   \begin{center}
@@ -111,17 +134,93 @@ suwnicy, której schemat znajduje się na rysunku \ref{sch:model}.
   \label{sch:model}
 \end{figure}
 
-Suwnica w takiej konfiguracji, potrafi poruszać się w dwóch kierunkach w
-płaszczyźnie poziomej. Ponadto długość liny nośnej jest niezależnie sterowana.
-Daje to system o trzech wejściach sterujących. Taki model suwnicy można opisać
-układem nieliniowych równań różniczkowych rzędu 10. Sterowanie optymalne
-wyznaczone zostanie przy pomocy metody \textit{variable control
-parametrization} uogólnionej na wielowejściowy system \cite{agh:vcpftop}.
-Poniższa praca została w dużej części wzorowana artykułem \cite{agh:crane}.
+Układ równań stanu dany jest zależnościami \eqref{equ:rstanu},
+\eqref{equ:rstanu_n} oraz \eqref{equ:rstanu_v} \cite{agh:crane}.
+
+\begin{equation}
+  \begin{cases}
+    \dot{x_1}=x_2\\
+    \dot{x_2}=N_1+\mu_1\cos{x_5}N_3\\
+    \dot{x_3}=x_4\\
+    \dot{x_4}=N_2+\mu_2\sin{x_5}\sin{x_7}N_3\\
+    \dot{x_5}=x_6\\
+    \dot{x_6}=\left(\sin{x_5}N_1-\cos{x_5}\sin{x_7}N_2+(\mu_1-\mu_2\sin^2{x_7})\cos{x_5}\sin{x_5}N_3+V_5\right)\frac{1}{x_9}\\
+    \dot{x_7}=x_8\\
+    \dot{x_8}=-\left(\cos{x_7}N_2+\mu_2\sin{x_5}\cos{x_7}\sin{x_7}N_3+V_6\right)\frac{1}{\sin{x_5}x_9}\\
+    \dot{x_9}=x_{10}\\
+    \dot{x_{10}}=-\cos{x_5}N_1-\sin{x_5}\cos{x_7}N_2-(1+\mu_1\cos^2{x_5}+\mu_2\sin^2{x_5}\sin^2{x_7})N_3+V_7\\
+  \end{cases}
+  \label{equ:rstanu}
+\end{equation}
+
+\begin{equation}
+  \begin{cases}
+    V_5=\cos{x_5}\sin{x_5}x_8^2x_9-2x_{10}x_6+g\cos{x_5}\cos{x_7}\\
+    V_6=2x_8(\cos{x_5}x_6x_9+\sin{x_5}x_{10})+g\sin{x_7}\\
+    V_7=\sin^2{x_5}x_8^2x_9+g\sin{x_5}\cos{x_7}+x_6^2x_9\\
+  \end{cases}
+  \label{equ:rstanu_v}
+\end{equation}
+
+\begin{equation}
+  \begin{cases}
+    N_1=u_1-k_1x_2\\
+    N_2=u_2-k_2x_4\\
+    N_3=u_3+k_3x_{10}\\
+  \end{cases}
+  \label{equ:rstanu_n}
+\end{equation}
+
+\vspace{0.2cm}
+\noindent
+gdzie zmienne stanu równania to:
+
+\vspace{0.5cm}
+\begin{tabular}{R{0.5cm}clcl}
+  $x_1$ & = & $x_w$ & -- & Pozycja wózka w osi $x$\\
+  $x_2$ & = & $\dot{x}_w$ & -- & Prędkość wózka w osi $x$\\
+  $x_3$ & = & $y_w$ & -- & Pozycja wózka w osi $y$\\
+  $x_4$ & = & $\dot{y}_w$ & -- & Prędkość wózka w osi $y$\\
+  $x_5$ & = & $\alpha$ & -- & Pozycja kątowa liny nośnej względem osi $x$\\
+  $x_6$ & = & $\dot{\alpha}$ & -- & Prędkość kątowa liny nośnej względem osi $x$\\
+  $x_7$ & = & $\beta$ & -- & Pozycja kątowa rzutu liny nośnej na płaszczyznę
+  $yz$ względem osi $z$\\
+  $x_8$ & = & $\dot{\beta}$ & -- & Prędkość kątowa rzutu liny nośnej na płaszczyznę
+  $yz$ względem osi $z$\\
+  $x_9$ & = & $R$ & -- & Długość liny nośnej\\
+  $x_{10}$ & = & $\dot{R}$ & -- & Prędkość rozwijania liny nośnej\\
+\end{tabular}
+\vspace{0.5cm}
+
+\vspace{0.2cm}
+\noindent
+a parametry równania to:
+
+\vspace{0.5cm}
+\begin{tabular}{R{0.5cm}cl}
+  $\mu_1$ & = & $\frac{m_c}{m_w}$\\
+  $\mu_2$ & = & $\frac{m_c}{m_w+m_s}$\\
+\end{tabular}
+\vspace{0.5cm}
+
+\subsection{Model uproszczony}
+
+Powyższy model sprawiał trudności podczas obliczeń numerycznych, dlatego do
+dalszych rozważań przyjęty został uproszczony układ równań stanu, spełniający
+\eqref{equ:rstanu_simp}. Takie uproszczenie oznacza tyle, że lina nośna suwnicy
+ma stałą długość $1[m]$.
+
+\begin{equation}
+  \begin{cases}
+    x_9=1\\
+    x_{10}=0\\
+  \end{cases}
+  \label{equ:rstanu_simp}
+\end{equation}
 
 \newpage
 
-\section{Model matematyczny suwnicy}
+\section{Algorytm wyznaczania sterowania}
 
 
 
